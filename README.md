@@ -43,10 +43,6 @@ $.fn.gscrollbar.defaults = {
 
 ```css
 
-.gscrollbar {
-    border:1px solid #ddd;
-    box-shadow:2px 2px 6px rgba(0,0,0,.3);
-}
 .gscrollbar .viewport { 
     overflow: hidden; 
     position: relative; 
