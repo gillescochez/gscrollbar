@@ -1,21 +1,21 @@
 /*! github.com/gillescochez/gscrollbar */
 (function($){
     
+    // helps minification
     var name = 'gscrollbar';
     var mouseup = 'mouseup';
+    var mousedown = 'mousedown';
+    var mousemove = 'mousemove';
 
     function Scrollbar(root, options){
 
-            // help minification a bit
-          
+            // helps minification
             var min = Math.min;
             var max = Math.max;
             var $doc = $(document);
 
-            var $Viewport = $('<div class="viewport" />').height(root.innerHeight());
             var $Content = $('<div class="overview" />').append(root.children());
-            
-            $Viewport.append($Content);
+            var $Viewport = $('<div class="viewport" />').height(root.innerHeight()).append($Content);
 
             var $Scrollbar = $('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>');
             var $Track = $Scrollbar.find('.track');
@@ -72,11 +72,11 @@
 
             function setEvents(){
 
-                $Thumb.bind('mousedown', start);
+                $Thumb.bind(mousedown, start);
 
                  $Thumb[0].ontouchstart = function(oEvent){
                     oEvent.preventDefault();
-                    $Thumb.unbind('mousedown');
+                    $Thumb.unbind(mousedown);
                     start(oEvent.touches[0]);
                     return false;
                 };
@@ -98,9 +98,9 @@
                 
                 iPosition.start = oThumbDir == 'auto' ? 0 : oThumbDir;
                 
-                $doc.bind('mousemove', drag);
+                $doc.bind(mousemove, drag);
                    $doc[0].ontouchmove = function(oEvent){
-                    $doc.unbind('mousemove');
+                    $doc.unbind(mousemove);
                     drag(oEvent.touches[0]);
                 };
 
@@ -132,7 +132,7 @@
             };
 
             function end(oEvent){
-                $doc.unbind('mousemove', drag);
+                $doc.unbind(mousemove, drag);
                 $doc.unbind(mouseup, end);
                 $Thumb.unbind(mouseup, end);
                 $doc[0].ontouchmove = $Thumb[0].ontouchend = $doc[0].ontouchend = null;
@@ -155,12 +155,12 @@
     $.fn[name] = function(options, sScroll) {
         
         if (options === 'update') {
-            this.data('tsb').update(sScroll);
+            this.data(name).update(sScroll);
             return this;
         };
 
         return this.each(function() {
-            $(this).data('tsb', new Scrollbar($(this), $.extend({}, $.fn[name].defaults, options)));
+            $(this).data(name, new Scrollbar($(this), $.extend({}, $.fn[name].defaults, options)));
         });
     };
 
