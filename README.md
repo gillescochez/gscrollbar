@@ -38,6 +38,54 @@ $.fn.gscrollbar.defaults = {
 
 ```
 
+## CSS
+
+
+```css
+
+.gscrollbar {
+    border:1px solid #ddd;
+    box-shadow:2px 2px 6px rgba(0,0,0,.3);
+}
+.gscrollbar .viewport { 
+    overflow: hidden; 
+    position: relative; 
+}
+.gscrollbar .overview {
+    list-style: none; 
+    position: absolute; 
+    left: 0; 
+    top: 0; 
+    padding: 0; 
+    margin: 0; 
+}
+.gscrollbar .scrollbar{
+    position: relative; 
+    float: right; 
+    width: 10px;
+}
+.gscrollbar .track {
+    background: #f4f4f4;
+    height: 100%;
+    width: 10px;
+    position: relative;
+}
+.gscrollbar .thumb {
+    background: #ccc;  
+    height: 20px; 
+    width: 10px; 
+    cursor: pointer; 
+    overflow: hidden; 
+    position: absolute;
+    border-radius:5px;
+    top: 0;
+}
+.gscrollbar .disable { 
+    display: none; 
+}
+
+```
+
 # credits
 
 gscrollbar is based on tiny scrollbar and it released under the same license.
