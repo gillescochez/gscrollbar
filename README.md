@@ -46,14 +46,26 @@ The differences between the 2 plugins  are the following:
 
 * Different API
 * gscrollbar inject the DOM it needs, tiny expects it (for every instance)
-* 
+* gscrollbar is slightly bigger (2.69 against 2.29 minified)
 
 So not much really, tiny scrollbar is really good I just didn't like having to set up the markup it expects in my documents for each element using it.
 
 ## Tiny Scrollbar Copyright Notice
 
-Tiny Scrollbar 1.66 - http://www.baijs.nl/tinyscrollbar/
-Copyright 2010, Maarten Baijs
-Dual licensed under the MIT or GPL Version 2 licenses.
-http://www.opensource.org/licenses/mit-license.php
-http://www.opensource.org/licenses/gpl-2.0.php
+```javascript
+
+/*!
+* Tiny Scrollbar 1.66
+* http://www.baijs.nl/tinyscrollbar/
+*
+* Copyright 2010, Maarten Baijs
+* Dual licensed under the MIT or GPL Version 2 licenses.
+* http://www.opensource.org/licenses/mit-license.php
+* http://www.opensource.org/licenses/gpl-2.0.php
+*
+* Date: 13 / 11 / 2011
+* Depends on library: jQuery
+* 
+*/
+
+```

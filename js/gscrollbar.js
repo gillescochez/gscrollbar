@@ -8,16 +8,23 @@
             var max = Math.max;
             var $doc = $(document);
 
+            var $Viewport = $('<div class="viewport" />').height(root.innerHeight());
+            var $Content = $('<div class="overview" />').append(root.children());
+            
+            $Viewport.append($Content);
+
+            var $Scrollbar = $('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>'); 
+
             var oSelf = this;
-            var oWrapper = root.addClass('gscrollbar').prepend('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>');
-            var oViewport = { obj: $(root).children(':not(.scrollbar)').wrapAll('<div class="overview" />').end().children('.overview').wrap('<div class="viewport" />').parent().css('height', root.height()) };
-            var oContent = { obj: oViewport.obj.children(0) };
-            var oScrollbar = { obj: $('.scrollbar', root) };
-            var oTrack = { obj: $('.track', oScrollbar.obj) };
-            var oThumb = { obj: $('.thumb', oScrollbar.obj) };
+            var oWrapper = root.addClass('gscrollbar').append($Scrollbar, $Viewport);
+            var oViewport = { obj: $Viewport };
+            var oContent = { obj: $Content };
+            var oScrollbar = { obj: $Scrollbar };
+            var oTrack = { obj: $('.track', $Scrollbar) };
+            var oThumb = { obj: $('.thumb', $Scrollbar) };
             var sAxis = options.axis == 'x', sDirection = sAxis ? 'left' : 'top', sSize = sAxis ? 'Width' : 'Height';
             var iScroll, iPosition = { start: 0, now: 0 }, iMouse = {};
-
+console.log(oTrack, oThumb);
             function initialize() {	
                 oSelf.update();
                 setEvents();
