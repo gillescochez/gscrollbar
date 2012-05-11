@@ -1,9 +1,13 @@
 /*! github.com/gillescochez/gscrollbar */
 (function($){
     
+    var name = 'gscrollbar';
+    var mouseup = 'mouseup';
+
     function Scrollbar(root, options){
 
             // help minification a bit
+          
             var min = Math.min;
             var max = Math.max;
             var $doc = $(document);
@@ -13,28 +17,37 @@
             
             $Viewport.append($Content);
 
-            var $Scrollbar = $('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>'); 
+            var $Scrollbar = $('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>');
+            var $Track = $Scrollbar.find('.track');
+            var $Thumb = $Scrollbar.find('.thumb');
 
             var oSelf = this;
-            var oWrapper = root.addClass('gscrollbar').append($Scrollbar, $Viewport);
-            var oViewport = { obj: $Viewport };
-            var oContent = { obj: $Content };
-            var oScrollbar = { obj: $Scrollbar };
-            var oTrack = { obj: $('.track', $Scrollbar) };
-            var oThumb = { obj: $('.thumb', $Scrollbar) };
-            var sAxis = options.axis == 'x', sDirection = sAxis ? 'left' : 'top', sSize = sAxis ? 'Width' : 'Height';
-            var iScroll, iPosition = { start: 0, now: 0 }, iMouse = {};
-console.log(oTrack, oThumb);
+            var oWrapper = root.addClass(name).append($Scrollbar, $Viewport);
+            var oViewport = {};
+            var oContent = {};
+            var oScrollbar = {};
+            var oTrack = {};
+            var oThumb = {};
+
+            var sAxis = options.axis == 'x', 
+                sDirection = sAxis ? 'left' : 'top', 
+                sSize = sAxis ? 'Width' : 'Height';
+            
+            var iScroll, 
+                iPosition = { start: 0, now: 0 },
+                iMouse = {};
+
             function initialize() {	
                 oSelf.update();
                 setEvents();
                 return oSelf;
             }
+
             this.update = function(sScroll) {
-                oViewport[options.axis] = oViewport.obj[0]['offset'+ sSize];
-                oContent[options.axis] = oContent.obj[0]['scroll'+ sSize];
+                oViewport[options.axis] = $Viewport[0]['offset'+ sSize];
+                oContent[options.axis] = $Content[0]['scroll'+ sSize];
                 oContent.ratio = oViewport[options.axis] / oContent[options.axis];
-                oScrollbar.obj.toggleClass('disable', oContent.ratio >= 1);
+                $Scrollbar.toggleClass('disable', oContent.ratio >= 1);
                 oTrack[options.axis] = options.size == 'auto' ? oViewport[options.axis] : options.size;
                 oThumb[options.axis] = min(oTrack[options.axis], max(0, ( options.sizethumb == 'auto' ? (oTrack[options.axis] * oContent.ratio) : options.sizethumb )));
                 oScrollbar.ratio = options.sizethumb == 'auto' ? (oContent[options.axis] / oTrack[options.axis]) : (oContent[options.axis] - oViewport[options.axis]) / (oTrack[options.axis] - oThumb[options.axis]);
@@ -43,24 +56,33 @@ console.log(oTrack, oThumb);
                 setSize();
             };
             function setSize(){
-                oThumb.obj.css(sDirection, iScroll / oScrollbar.ratio);
-                oContent.obj.css(sDirection, -iScroll);
-                iMouse['start'] = oThumb.obj.offset()[sDirection];
+
+                $Thumb.css(sDirection, iScroll / oScrollbar.ratio);
+                $Content.css(sDirection, -iScroll);
+
+                iMouse['start'] = $Thumb.offset()[sDirection];
+
                 var sCssSize = sSize.toLowerCase(); 
-                oScrollbar.obj.css(sCssSize, oTrack[options.axis]);
-                oTrack.obj.css(sCssSize, oTrack[options.axis]);
-                oThumb.obj.css(sCssSize, oThumb[options.axis]);		
+
+                $Scrollbar.css(sCssSize, oTrack[options.axis]);
+
+                $Track.css(sCssSize, oTrack[options.axis]);
+                $Thumb.css(sCssSize, oThumb[options.axis]);		
             };	
 
             function setEvents(){
-                oThumb.obj.bind('mousedown', start);
-                oThumb.obj[0].ontouchstart = function(oEvent){
+
+                $Thumb.bind('mousedown', start);
+
+                 $Thumb[0].ontouchstart = function(oEvent){
                     oEvent.preventDefault();
-                    oThumb.obj.unbind('mousedown');
+                    $Thumb.unbind('mousedown');
                     start(oEvent.touches[0]);
                     return false;
-                };	
-                oTrack.obj.bind('mouseup', drag);
+                };
+
+                $Track.bind(mouseup, drag);
+
                 if(options.scroll && this.addEventListener){
                     oWrapper[0].addEventListener('DOMMouseScroll', wheel, false);
                     oWrapper[0].addEventListener('mousewheel', wheel, false );
@@ -69,19 +91,25 @@ console.log(oTrack, oThumb);
             };
 
             function start(oEvent){
+                
                 iMouse.start = sAxis ? oEvent.pageX : oEvent.pageY;
-                var oThumbDir = parseInt(oThumb.obj.css(sDirection));
+                
+                var oThumbDir = parseInt($Thumb.css(sDirection));
+                
                 iPosition.start = oThumbDir == 'auto' ? 0 : oThumbDir;
+                
                 $doc.bind('mousemove', drag);
-                 $doc[0].ontouchmove = function(oEvent){
+                   $doc[0].ontouchmove = function(oEvent){
                     $doc.unbind('mousemove');
                     drag(oEvent.touches[0]);
                 };
-                $doc.bind('mouseup', end);
-                oThumb.obj.bind('mouseup', end);
-                 oThumb.obj[0].ontouchend = $doc[0].ontouchend = function(oEvent){
-                    $doc.unbind('mouseup');
-                    oThumb.obj.unbind('mouseup');
+
+                $doc.bind(mouseup, end);
+                $Thumb.bind(mouseup, end);
+
+                 $Thumb[0].ontouchend = $doc[0].ontouchend = function(oEvent){
+                    $doc.unbind(mouseup);
+                    $Thumb.unbind(mouseup);
                     end(oEvent.touches[0]);
                 };
                 return false;
@@ -91,10 +119,12 @@ console.log(oTrack, oThumb);
                 if(!(oContent.ratio >= 1)){
                     var oEvent = oEvent || window.event;
                     var iDelta = oEvent.wheelDelta ? oEvent.wheelDelta/120 : -oEvent.detail/3;
+                    
                     iScroll -= iDelta * options.wheel;
                     iScroll = min((oContent[options.axis] - oViewport[options.axis]), max(0, iScroll));
-                    oThumb.obj.css(sDirection, iScroll / oScrollbar.ratio);
-                    oContent.obj.css(sDirection, -iScroll);
+                    
+                    $Thumb.css(sDirection, iScroll / oScrollbar.ratio);
+                    $Content.css(sDirection, -iScroll);
                     
                     oEvent = $.event.fix(oEvent);
                     oEvent.preventDefault();
@@ -103,9 +133,9 @@ console.log(oTrack, oThumb);
 
             function end(oEvent){
                 $doc.unbind('mousemove', drag);
-                $doc.unbind('mouseup', end);
-                oThumb.obj.unbind('mouseup', end);
-                $doc[0].ontouchmove = oThumb.obj[0].ontouchend = $doc[0].ontouchend = null;
+                $doc.unbind(mouseup, end);
+                $Thumb.unbind(mouseup, end);
+                $doc[0].ontouchmove = $Thumb[0].ontouchend = $doc[0].ontouchend = null;
                 return false;
             };
 
@@ -113,8 +143,8 @@ console.log(oTrack, oThumb);
                 if(!(oContent.ratio >= 1)){
                     iPosition.now = min((oTrack[options.axis] - oThumb[options.axis]), max(0, (iPosition.start + ((sAxis ? oEvent.pageX : oEvent.pageY) - iMouse.start))));
                     iScroll = iPosition.now * oScrollbar.ratio;
-                    oContent.obj.css(sDirection, -iScroll);
-                    oThumb.obj.css(sDirection, iPosition.now);
+                    $Content.css(sDirection, -iScroll);
+                    $Thumb.css(sDirection, iPosition.now);
                 }
                 return false;
             };
@@ -122,7 +152,7 @@ console.log(oTrack, oThumb);
             return initialize();
     };
 
-    $.fn.gscrollbar = function(options, sScroll) {
+    $.fn[name] = function(options, sScroll) {
         
         if (options === 'update') {
             this.data('tsb').update(sScroll);
@@ -130,11 +160,11 @@ console.log(oTrack, oThumb);
         };
 
         return this.each(function() {
-            $(this).data('tsb', new Scrollbar($(this), $.extend({}, $.fn.gscrollbar.defaults, options)));
+            $(this).data('tsb', new Scrollbar($(this), $.extend({}, $.fn[name].defaults, options)));
         });
     };
 
-    $.fn.gscrollbar.defaults = {
+    $.fn[name].defaults = {
         axis: 'y', // vertical or horizontal scrollbar? ( x || y ).
         wheel: 40,  //how many pixels must the mouswheel scroll at a time.
         scroll: true, //enable or disable the mousewheel;
