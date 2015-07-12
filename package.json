@@ -1,0 +1,10 @@
+{
+  "name": "gscrollbar",
+  "version": "0.1.1",
+  "repository": "https://github.com/gillescochez/gscrollbar",
+  "description": "jquery custom scrollbar plugin with touch device support, lightweight and easy to use.",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.0"
+  }
+}
