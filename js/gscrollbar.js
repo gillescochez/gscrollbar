@@ -6,6 +6,7 @@
     var mouseup = 'mouseup';
     var mousedown = 'mousedown';
     var mousemove = 'mousemove';
+    var auto = "auto";
 
     function Scrollbar(root, options){
 
@@ -48,13 +49,14 @@
                 oContent[options.axis] = $Content[0]['scroll'+ sSize];
                 oContent.ratio = oViewport[options.axis] / oContent[options.axis];
                 $Scrollbar.toggleClass('disable', oContent.ratio >= 1);
-                oTrack[options.axis] = options.size == 'auto' ? oViewport[options.axis] : options.size;
-                oThumb[options.axis] = min(oTrack[options.axis], max(0, ( options.sizethumb == 'auto' ? (oTrack[options.axis] * oContent.ratio) : options.sizethumb )));
-                oScrollbar.ratio = options.sizethumb == 'auto' ? (oContent[options.axis] / oTrack[options.axis]) : (oContent[options.axis] - oViewport[options.axis]) / (oTrack[options.axis] - oThumb[options.axis]);
+                oTrack[options.axis] = options.size == auto ? oViewport[options.axis] : options.size;
+                oThumb[options.axis] = min(oTrack[options.axis], max(0, ( options.sizethumb == auto ? (oTrack[options.axis] * oContent.ratio) : options.sizethumb )));
+                oScrollbar.ratio = options.sizethumb == auto ? (oContent[options.axis] / oTrack[options.axis]) : (oContent[options.axis] - oViewport[options.axis]) / (oTrack[options.axis] - oThumb[options.axis]);
                 iScroll = (sScroll == 'relative' && oContent.ratio <= 1) ? min((oContent[options.axis] - oViewport[options.axis]), max(0, iScroll)) : 0;
                 iScroll = (sScroll == 'bottom' && oContent.ratio <= 1) ? (oContent[options.axis] - oViewport[options.axis]) : isNaN(parseInt(sScroll)) ? iScroll : parseInt(sScroll);
                 setSize();
             };
+        
             function setSize(){
 
                 $Thumb.css(sDirection, iScroll / oScrollbar.ratio);
@@ -68,7 +70,7 @@
 
                 $Track.css(sCssSize, oTrack[options.axis]);
                 $Thumb.css(sCssSize, oThumb[options.axis]);		
-            };	
+            }
 
             function setEvents(){
 
@@ -88,7 +90,7 @@
                     oWrapper[0].addEventListener('mousewheel', wheel, false );
                 }
                 else if(options.scroll){oWrapper[0].onmousewheel = wheel;}
-            };
+            }
 
             function start(oEvent){
                 
@@ -96,7 +98,7 @@
                 
                 var oThumbDir = parseInt($Thumb.css(sDirection));
                 
-                iPosition.start = oThumbDir == 'auto' ? 0 : oThumbDir;
+                iPosition.start = oThumbDir == auto ? 0 : oThumbDir;
                 
                 $doc.bind(mousemove, drag);
                    $doc[0].ontouchmove = function(oEvent){
@@ -113,7 +115,7 @@
                     end(oEvent.touches[0]);
                 };
                 return false;
-            };	
+            }
 
             function wheel(oEvent){
                 if(!(oContent.ratio >= 1)){
@@ -128,8 +130,8 @@
                     
                     oEvent = $.event.fix(oEvent);
                     oEvent.preventDefault();
-                };
-            };
+                }
+            }
 
             function end(oEvent){
                 $doc.unbind(mousemove, drag);
@@ -137,7 +139,7 @@
                 $Thumb.unbind(mouseup, end);
                 $doc[0].ontouchmove = $Thumb[0].ontouchend = $doc[0].ontouchend = null;
                 return false;
-            };
+            }
 
             function drag(oEvent){
                 if(!(oContent.ratio >= 1)){
@@ -147,17 +149,17 @@
                     $Thumb.css(sDirection, iPosition.now);
                 }
                 return false;
-            };
+            }
             
             return initialize();
-    };
+    }
 
     $.fn[name] = function(options, sScroll) {
         
         if (options === 'update') {
             this.data(name).update(sScroll);
             return this;
-        };
+        }
 
         return this.each(function() {
             $(this).data(name, new Scrollbar($(this), $.extend({}, $.fn[name].defaults, options)));
@@ -168,8 +170,8 @@
         axis: 'y', // vertical or horizontal scrollbar? ( x || y ).
         wheel: 40,  //how many pixels must the mouswheel scroll at a time.
         scroll: true, //enable or disable the mousewheel;
-        size: 'auto', //set the size of the scrollbar to auto or a fixed number.
-        sizethumb: 'auto' //set the size of the thumb to auto or a fixed number.
+        size: auto, //set the size of the scrollbar to auto or a fixed number.
+        sizethumb: auto //set the size of the thumb to auto or a fixed number.
     };	
 
 })(jQuery);
